@@ -1,0 +1,91 @@
+[tool.poetry]
+name = "cytotransform"
+version = "0.1.0"
+description = "Rapid transformations for cytometry data"
+authors = ["Ross Burton <burtonrossj@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+numpy = "^1.24.2"
+joblib = "^1.2.0"
+scipy = "^1.10.1"
+matplotlib = "^3.7.1"
+setuptools = "^67.7.1"
+pybind11 = "^2.10.4"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "*"
+coverage = {version = "*", extras = ["toml"]}
+flake8 = "*"
+flake8-black = "*"
+flake8-bugbear = "*"
+flake8-docstrings = "*"
+flake8-isort = "*"
+flake8-unused-arguments = "*"
+isort = "*"
+pep8-naming = "*"
+pytest = "*"
+pytest-cov = "*"
+pytest-mock = "*"
+pre-commit = "*"
+mongomock = "*"
+mypy = "*"
+
+
+[build-system]
+requires = ["pybind11", "setuptools"]
+build-backend = "setuptools.build_meta"
+
+##### isort configuration https://pycqa.github.io/isort/docs/configuration/config_files.html
+[tool.isort]
+profile = "black"
+default_section = "THIRDPARTY"
+sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+skip = "__init__.py"
+
+##### black configuration https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
+[tool.black]
+line-length    = 88
+target_version = ['py39']
+
+
+##### pytest configuration: http://doc.pytest.org/en/latest/customize.html
+[tool.pytest.ini_options]
+minversion = "6.0"
+python_files = [ "test_*.py" ]
+norecursedirs = [
+  ".git",
+  ".pytest_cache",
+  ".aws-sam"
+]
+filterwarnings = [
+  "ignore::UserWarning",
+  "ignore::DeprecationWarning",
+  "ignore::PendingDeprecationWarning"
+]
+addopts    = """
+  --color=yes
+  -p no:cacheprovider
+  --verbose
+  --junitxml=report.xml
+  --cov-report term-missing:skip-covered
+  --cov-report xml
+  --cov src
+"""
+
+##### coverage configuration: https://coverage.readthedocs.io/en/latest/config.html
+[tool.coverage]
+[tool.coverage.paths]
+source = ["src"]
+
+[tool.coverage.run]
+branch = true
+source = ["cytosymphony"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 100
