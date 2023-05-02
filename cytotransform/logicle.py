@@ -1,16 +1,29 @@
-from functools import partial
+import sys
 
 from .base import Transform
 from cytotransform.logicle_ext import FastLogicle
 import numpy as np
 
 
-def logicle(x: np.ndarray, t: int, w: float, m: float, a: float, inverse: bool = False) -> np.ndarray:
+def _fastlogicle_wrapper(data: np.ndarray, t: int, w: float, m: float, a: float) -> np.ndarray:
+    fl = FastLogicle(T=t, W=w, M=m, A=a)
+    logicle_min, logicle_max = fl.inverse(0.0), fl.inverse(1.0 - sys.float_info.epsilon)
+    data = np.clip(data, logicle_min, logicle_max)
+    return np.vectorize(fl.scale)(data)
 
-    pass
+
+def _fastlogicle_inverse_wrapper(data: np.ndarray, t: int, w: float, m: float, a: float) -> np.ndarray:
+    fl = FastLogicle(T=t, W=w, M=m, A=a)
+    return np.vectorize(fl.inverse)(data)
 
 
 class LogicleTransform(Transform):
+    """
+    Logicle transform, implemented using the FastLogicle class as originally published in the following paper:
+
+    Moore WA, Parks DR. Update for the logicle data scale including operational code implementations. Cytometry A. 2012
+    Apr;81(4):273-7. doi: 10.1002/cyto.a.22030. Epub 2012 Mar 12. PMID: 22411901; PMCID: PMC4761345.
+    """
     def __init__(
             self,
             w: float = 0.5,
@@ -20,12 +33,8 @@ class LogicleTransform(Transform):
             n_jobs: int = -1
     ):
         """
-        Logicle transform
-
         Parameters
         ----------
-        x: np.ndarray
-            Data to transform.
         t: int
             The maximum value of the input data that the transformation
             should handle. It sets the upper limit of the linear range
@@ -54,13 +63,11 @@ class LogicleTransform(Transform):
             A smaller A value will push the linear range further from
             the negative values, making it easier to visualize and
             analyze data points further from zero.
-        inverse: bool
-            Whether to perform the inverse transform.
         """
-        fastlogicle = FastLogicle(t, w, m, a)
+        self._fl = FastLogicle(T=t, M=m, W=w, A=a)
         super().__init__(
-            transform_function=fastlogicle.scale,
-            inverse_transform_function=fastlogicle.inverse,
+            transform_function=_fastlogicle_wrapper,
+            inverse_transform_function=_fastlogicle_inverse_wrapper,
             parameters={
                 'w': w,
                 't': t,
@@ -71,7 +78,7 @@ class LogicleTransform(Transform):
         )
 
     def transform(self, data: np.ndarray) -> np.ndarray:
-        return self._multiprocess_call(data, self.transform_function)
+        return self._multiprocess_call(data, self._transform_function)
 
     def inverse_transform(self, data: np.ndarray) -> np.ndarray:
-        return self._multiprocess_call(data, self.inverse_transform_function)
+        return self._multiprocess_call(data, self._inverse_transform_function)

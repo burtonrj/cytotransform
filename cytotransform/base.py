@@ -13,8 +13,8 @@ class Transform(ABC):
             parameters: dict,
             n_jobs: int = -1
     ):
-        self.transform_function = transform_function
-        self.inverse_transform_function = inverse_transform_function
+        self._transform_function = transform_function
+        self._inverse_transform_function = inverse_transform_function
         self.parameters = parameters
         self.n_jobs: int = n_jobs if n_jobs > 0 else cpu_count()
 
@@ -40,10 +40,9 @@ class Transform(ABC):
         np.ndarray
             Batches of data.
         """
-        return np.array_split(data, self.n_jobs)
+        n = self.n_jobs if len(data) > 100 else 1
+        return np.array_split(data, n)
 
     def _multiprocess_call(self, data: np.ndarray, func: Callable) -> np.ndarray:
         with Parallel(n_jobs=self.n_jobs) as parallel:
             return np.concatenate(parallel(delayed(func)(batch, **self.parameters) for batch in self._batches(data)))
-
-
