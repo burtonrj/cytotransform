@@ -1,11 +1,9 @@
-from abc import ABC, abstractmethod
 from typing import Callable
 from joblib import Parallel, delayed, cpu_count
-from scipy.optimize import root_scalar
 import numpy as np
 
 
-class Transform(ABC):
+class Transform:
     def __init__(
             self,
             transform_function: Callable,
@@ -18,13 +16,11 @@ class Transform(ABC):
         self.parameters = parameters
         self.n_jobs: int = n_jobs if n_jobs > 0 else cpu_count()
 
-    @abstractmethod
     def transform(self, data: np.ndarray) -> np.ndarray:
-        ...
+        return self._multiprocess_call(data, self._transform_function)
 
-    @abstractmethod
     def inverse_transform(self, data: np.ndarray) -> np.ndarray:
-        ...
+        return self._multiprocess_call(data, self._inverse_transform_function)
 
     def _batches(self, data: np.ndarray) -> np.ndarray:
         """

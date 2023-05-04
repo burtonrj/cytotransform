@@ -76,9 +76,3 @@ class LogicleTransform(Transform):
             },
             n_jobs=n_jobs
         )
-
-    def transform(self, data: np.ndarray) -> np.ndarray:
-        return self._multiprocess_call(data, self._transform_function)
-
-    def inverse_transform(self, data: np.ndarray) -> np.ndarray:
-        return self._multiprocess_call(data, self._inverse_transform_function)
