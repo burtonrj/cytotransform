@@ -1,7 +1,6 @@
-import sys
+import numpy as np
 
 from .base import Transform
-import numpy as np
 
 
 def parametrized_log(x: np.ndarray, m: float, t: int) -> np.ndarray:
@@ -9,7 +8,7 @@ def parametrized_log(x: np.ndarray, m: float, t: int) -> np.ndarray:
     Parametrized logarithmic transformation
     """
     x = np.asarray(x)
-    return (1/m) * np.log10(x / t) + 1.0
+    return (1 / m) * np.log10(x / t) + 1.0
 
 
 def inverse_parametrized_log(x: np.ndarray, m: float, t: int) -> np.ndarray:
@@ -24,12 +23,8 @@ class ParametrizedLogTransform(Transform):
     """
     Parametrized logarithmic transformation
     """
-    def __init__(
-            self,
-            m: float = 4.5,
-            t: int = 262144,
-            n_jobs: int = -1
-    ):
+
+    def __init__(self, m: float = 4.5, t: int = 262144, n_jobs: int = -1):
         """
         Parameters
         ----------
@@ -47,17 +42,17 @@ class ParametrizedLogTransform(Transform):
             of data points in the transformed space.
         """
         super().__init__(
-            transform_function=inverse_parametrized_log,
+            transform_function=parametrized_log,
             inverse_transform_function=inverse_parametrized_log,
             parameters={
-                't': t,
-                'm': m,
+                "t": t,
+                "m": m,
             },
-            n_jobs=n_jobs
+            n_jobs=n_jobs,
         )
 
     def validation(self):
-        if not self.parameters['t'] > 0:
-            raise ValueError('t must be strictly positive')
-        if not self.parameters['m'] > 0:
-            raise ValueError('m must be strictly positive')
+        if not self.parameters["t"] > 0:
+            raise ValueError("t must be strictly positive")
+        if not self.parameters["m"] > 0:
+            raise ValueError("m must be strictly positive")
