@@ -5,16 +5,16 @@ from cytotransform.logicle_ext import FastLogicle
 import numpy as np
 
 
-def _fastlogicle_wrapper(data: np.ndarray, t: int, w: float, m: float, a: float) -> np.ndarray:
+def fastlogicle_wrapper(x: np.ndarray, t: int, w: float, m: float, a: float) -> np.ndarray:
     fl = FastLogicle(T=t, W=w, M=m, A=a)
     logicle_min, logicle_max = fl.inverse(0.0), fl.inverse(1.0 - sys.float_info.epsilon)
-    data = np.clip(data, logicle_min, logicle_max)
-    return np.vectorize(fl.scale)(data)
+    x = np.clip(x, logicle_min, logicle_max)
+    return np.vectorize(fl.scale)(x)
 
 
-def _fastlogicle_inverse_wrapper(data: np.ndarray, t: int, w: float, m: float, a: float) -> np.ndarray:
+def fastlogicle_inverse_wrapper(x: np.ndarray, t: int, w: float, m: float, a: float) -> np.ndarray:
     fl = FastLogicle(T=t, W=w, M=m, A=a)
-    return np.vectorize(fl.inverse)(data)
+    return np.vectorize(fl.inverse)(x)
 
 
 class LogicleTransform(Transform):
@@ -66,8 +66,8 @@ class LogicleTransform(Transform):
         """
         self._fl = FastLogicle(T=t, M=m, W=w, A=a)
         super().__init__(
-            transform_function=_fastlogicle_wrapper,
-            inverse_transform_function=_fastlogicle_inverse_wrapper,
+            transform_function=fastlogicle_wrapper,
+            inverse_transform_function=fastlogicle_inverse_wrapper,
             parameters={
                 'w': w,
                 't': t,
@@ -76,3 +76,13 @@ class LogicleTransform(Transform):
             },
             n_jobs=n_jobs
         )
+
+    def validation(self):
+        if not self.parameters['t'] > 0:
+            raise ValueError('t must be strictly positive')
+        if not self.parameters['m'] > 0:
+            raise ValueError('m must be strictly positive')
+        if not 0 <= self.parameters['w_'] <= self.parameters['m_']/2:
+            raise ValueError('w must be strictly positive and less than or equal to half m')
+        if not -self.parameters['w_'] <= self.parameters['a_'] <= (self.parameters['m_'] - 2 * self.parameters['w_']):
+            raise ValueError("a must respect the relationship '−W ≤ A ≤ M − 2W'")

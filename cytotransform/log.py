@@ -4,18 +4,20 @@ from .base import Transform
 import numpy as np
 
 
-def _parametrized_log(data: np.ndarray, m: float, t: int) -> np.ndarray:
+def parametrized_log(x: np.ndarray, m: float, t: int) -> np.ndarray:
     """
     Parametrized logarithmic transformation
     """
-    return (1/m) * np.log10(data/t) + 1.0
+    x = np.asarray(x)
+    return (1/m) * np.log10(x / t) + 1.0
 
 
-def _inverse_parametrized_log(data: np.ndarray, m: float, t: int) -> np.ndarray:
+def inverse_parametrized_log(x: np.ndarray, m: float, t: int) -> np.ndarray:
     """
     Inverse parametrized logarithmic transformation
     """
-    return t * (10 ** ((data - 1) * m))
+    x = np.asarray(x)
+    return t * (10 ** ((x - 1) * m))
 
 
 class ParametrizedLogTransform(Transform):
@@ -45,11 +47,17 @@ class ParametrizedLogTransform(Transform):
             of data points in the transformed space.
         """
         super().__init__(
-            transform_function=_inverse_parametrized_log,
-            inverse_transform_function=_inverse_parametrized_log,
+            transform_function=inverse_parametrized_log,
+            inverse_transform_function=inverse_parametrized_log,
             parameters={
                 't': t,
                 'm': m,
             },
             n_jobs=n_jobs
         )
+
+    def validation(self):
+        if not self.parameters['t'] > 0:
+            raise ValueError('t must be strictly positive')
+        if not self.parameters['m'] > 0:
+            raise ValueError('m must be strictly positive')

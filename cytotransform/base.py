@@ -1,9 +1,10 @@
+from abc import ABC, abstractmethod
 from typing import Callable
 from joblib import Parallel, delayed, cpu_count
 import numpy as np
 
 
-class Transform:
+class Transform(ABC):
     def __init__(
             self,
             transform_function: Callable,
@@ -15,6 +16,11 @@ class Transform:
         self._inverse_transform_function = inverse_transform_function
         self.parameters = parameters
         self.n_jobs: int = n_jobs if n_jobs > 0 else cpu_count()
+        self.validation()
+
+    @abstractmethod
+    def validation(self):
+        ...
 
     def transform(self, data: np.ndarray) -> np.ndarray:
         return self._multiprocess_call(data, self._transform_function)
