@@ -1,9 +1,9 @@
-import sys
+from functools import cache
+
+import numpy as np
+from scipy.optimize import newton
 
 from .base import Transform
-from scipy.optimize import newton
-from functools import cache
-import numpy as np
 
 
 @cache
@@ -24,7 +24,7 @@ def intermediates(t_: int, w_: float, m_: float, a_: float):
 
 def hyperlog(x: np.ndarray, t_: int, w_: float, m_: float, a_: float) -> np.ndarray:
     x = np.asarray(x)
-    a, b, c, f = intermediates(x, t_, w_, m_, a_)
+    a, b, c, f = intermediates(t_, w_, m_, a_)
 
     def _eh(y):
         return a * np.exp(b * y) + c * y - f
