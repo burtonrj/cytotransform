@@ -1,11 +1,10 @@
 [tool.poetry]
 name = "cytotransform"
-version = "0.1.1"
+version = "0.1.2"
 description = "Rapid transformations for cytometry data"
 authors = ["Ross Burton <burtonrossj@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-include = ["cytotransform/logicle_ext/*.cpp", "cytotransform/logicle_ext/*.h"]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
@@ -46,11 +45,6 @@ profile = "black"
 default_section = "THIRDPARTY"
 sections = "FUTURE,STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 skip = "__init__.py"
-
-##### black configuration https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
-[tool.black]
-line-length    = 88
-target_version = ['py311']
 
 
 ##### pytest configuration: http://doc.pytest.org/en/latest/customize.html
