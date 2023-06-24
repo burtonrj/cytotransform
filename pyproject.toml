@@ -35,9 +35,11 @@ mongomock = "*"
 mypy = "*"
 
 
-[build-system]
-requires = ["pybind11", "setuptools"]
-build-backend = "setuptools.build_meta"
+[tool.poetry.build]
+script = "python setup.py build_ext --inplace"
+
+[tool.poetry.package]
+include = ["cytotransform/logicle_ext/*.cpp", "cytotransform/logicle_ext/*.h"]
 
 ##### isort configuration https://pycqa.github.io/isort/docs/configuration/config_files.html
 [tool.isort]
@@ -49,7 +51,7 @@ skip = "__init__.py"
 ##### black configuration https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
 [tool.black]
 line-length    = 88
-target_version = ['py311']
+target_version = ['py310']
 
 
 ##### pytest configuration: http://doc.pytest.org/en/latest/customize.html
