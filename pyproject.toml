@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cytotransform"
-version = "0.1.0"
+version = "0.1.1"
 description = "Rapid transformations for cytometry data"
 authors = ["Ross Burton <burtonrossj@gmail.com>"]
 license = "MIT"
