@@ -1,12 +1,11 @@
 # Cytotransfrom
 
-[![PyPi]()()
-[![Python]()()
-[![Wheel]()()
-[![License]()()
-[![LastCommit]()()
-[![CodeCov]()()
-[![GitHubActions]()()
+![PyPI](https://img.shields.io/pypi/v/cytotransform)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/cytotransform)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/cytotransform)
+![PyPI - License](https://img.shields.io/pypi/l/cytotransform)
+![Codecov](https://img.shields.io/codecov/c/github/burtonrj/cytotransform)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/burtonrj/cytotransform/build.yaml)
 
 ## Description
 
