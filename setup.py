@@ -13,7 +13,7 @@ ext_modules = [
 
 setup(
     name="cytotransform",
-    version="0.1.2",
+    version="0.1.11",
     author="Ross Burton",
     author_email="burtonrossj@gmail.com",
     ext_modules=ext_modules,
