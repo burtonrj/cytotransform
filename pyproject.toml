@@ -5,6 +5,7 @@ description = "Rapid transformations for cytometry data"
 authors = ["Ross Burton <burtonrossj@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+include = ["cytotransform/logicle_ext/*.cpp", "cytotransform/logicle_ext/*.h"]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
@@ -35,11 +36,9 @@ mongomock = "*"
 mypy = "*"
 
 
-[tool.poetry.build]
-script = "python setup.py build_ext --inplace"
-
-[tool.poetry.package]
-include = ["cytotransform/logicle_ext/*.cpp", "cytotransform/logicle_ext/*.h"]
+[build-system]
+requires = ["pybind11", "setuptools"]
+build-backend = "setuptools.build_meta"
 
 ##### isort configuration https://pycqa.github.io/isort/docs/configuration/config_files.html
 [tool.isort]
@@ -51,7 +50,7 @@ skip = "__init__.py"
 ##### black configuration https://black.readthedocs.io/en/stable/usage_and_configuration/the_basics.html#configuration-via-a-file
 [tool.black]
 line-length    = 88
-target_version = ['py310']
+target_version = ['py311']
 
 
 ##### pytest configuration: http://doc.pytest.org/en/latest/customize.html
