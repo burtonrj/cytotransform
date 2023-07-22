@@ -33,7 +33,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
 
       - name: Run pytest
-        run: poetry run python -m pytest --import-mode=append tests/ --cov=tests/
+        run: poetry run python -m pytest --import-mode=append tests --cov=tests --cov=cytotransform --cov-report=xml
 
       - name: Run Coverage
         run: poetry run python -m coverage report -m;
