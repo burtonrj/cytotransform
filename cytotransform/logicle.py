@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 
-from cytotransform.logicle_ext import FastLogicle  # type: ignore
+from logicle_ext import FastLogicle  # type: ignore
 
 from .base import Transform
 

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cytotransform"
-version = "0.1.11"
+version = "0.1.12"
 description = "Rapid transformations for cytometry data"
 authors = ["Ross Burton <burtonrossj@gmail.com>"]
 license = "MIT"
@@ -33,11 +33,15 @@ pytest-mock = "*"
 pre-commit = "*"
 mongomock = "*"
 mypy = "*"
+setuptools_cpp = "*"
 
+[tool.poetry.build]
+generate-setup-file = true
+script = "build.py"
 
 [build-system]
-requires = ["pybind11", "setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry>=0.12", "setuptools", "wheel", "setuptools-cpp"]
+build-backend = "poetry.core.masonry.api"
 
 ##### isort configuration https://pycqa.github.io/isort/docs/configuration/config_files.html
 [tool.isort]
