@@ -1,6 +1,8 @@
 name: Cytotransform test & build
 
-on: push
+on:
+  push:
+    branches: [master, main]
 
 jobs:
   test:
