@@ -1,11 +1,12 @@
 name: Cytotransform test & build
 
-on: push
+on:
+  push:
+    branches: [master, main]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v1
         with:

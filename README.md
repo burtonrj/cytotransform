@@ -41,6 +41,9 @@ pip install cytotransform
 
 ## Usage
 
+The `transform` and `inverse_transform` methods take a numpy array or Pandas DataFrame as input and return a numpy the
+transformed array/dataframe.
+
 ### Parametrized logarithmic transformation
 
 ```python
