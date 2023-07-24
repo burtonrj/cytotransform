@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cytotransform"
-version = "0.2.1"
+version = "0.2.11"
 description = "Rapid transformations for cytometry data"
 authors = ["Ross Burton <burtonrossj@gmail.com>"]
 license = "MIT"
@@ -14,7 +14,7 @@ scipy = "^1.10.1"
 matplotlib = "^3.7.1"
 setuptools = "^67.7.1"
 pybind11 = "^2.10.4"
-pandas = "^2.0.3"
+pandas = ">=1.3.0,<2.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
