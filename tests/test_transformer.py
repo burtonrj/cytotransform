@@ -1,6 +1,7 @@
 from typing import NamedTuple, Type
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from cytotransform.asinh import AsinhTransform
@@ -174,22 +175,52 @@ LogicleGroup = TestGroup(
         (-1, LogicleGroup),
     ],
 )
-def test_transforms(n_jobs: int, group: TestGroup):
+def test_transforms_array(n_jobs: int, group: TestGroup):
     for case in group.cases:
         transformer = group.klass(**case.params, n_jobs=n_jobs)
         if n_jobs == -1:
             assert np.allclose(
-                transformer.transform(np.concatenate([group.x for _ in range(1000)])),
-                np.concatenate([case.y for _ in range(1000)]),
+                transformer.transform(np.concatenate([group.x for _ in range(10000)])),
+                np.concatenate([case.y for _ in range(10000)]),
                 atol=1e-5,
             )
             assert np.allclose(
                 transformer.inverse_transform(
-                    np.concatenate([case.y for _ in range(1000)])
+                    np.concatenate([case.y for _ in range(10000)])
                 ),
-                np.concatenate([group.x for _ in range(1000)]),
+                np.concatenate([group.x for _ in range(10000)]),
                 atol=1e-5,
             )
 
         assert np.allclose(transformer.transform(group.x), case.y, atol=1e-5)
         assert np.allclose(transformer.inverse_transform(case.y), group.x, atol=1e-5)
+
+
+@pytest.mark.parametrize(
+    "n_jobs,group",
+    [
+        (1, AsinhGroup),
+        (-1, AsinhGroup),
+        (1, LogGroup),
+        (-1, LogGroup),
+        (1, LogicleGroup),
+        (-1, LogicleGroup),
+    ],
+)
+def test_transforms_dataframe(n_jobs: int, group: TestGroup):
+    for case in group.cases:
+        transformer = group.klass(**case.params, n_jobs=n_jobs)
+        x, y = group.x, case.y
+        if n_jobs == -1:
+            x, y = np.concatenate([x for _ in range(10000)]), np.concatenate(
+                [y for _ in range(10000)]
+            )
+        df = pd.DataFrame({"x1": x, "x2": x, "x3": x})
+        transformed_df = transformer.transform(df)
+
+        for col in transformed_df.columns:
+            assert np.allclose(transformed_df[col], y, atol=1e-5)
+
+        inverse_transformed_df = transformer.inverse_transform(transformed_df)
+        for col in inverse_transformed_df.columns:
+            assert np.allclose(inverse_transformed_df[col], x, atol=1e-5)

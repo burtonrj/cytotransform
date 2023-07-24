@@ -50,10 +50,12 @@ class Transform(ABC):
         np.ndarray
             Batches of data.
         """
-        n = self.n_jobs if len(data) > 100 else 1
+        n = self.n_jobs if len(data) > 10000 else 1
         return np.array_split(data, n)
 
     def _multiprocess_call_array(self, data: np.ndarray, func: Callable) -> np.ndarray:
+        if self.n_jobs in [0, 1]:
+            return func(data, **self.parameters)
         with Parallel(n_jobs=self.n_jobs) as parallel:
             return np.concatenate(
                 parallel(
@@ -63,10 +65,24 @@ class Transform(ABC):
             )
 
     def _multiprocess_call_df(self, data: pd.DataFrame, func: Callable) -> pd.DataFrame:
-        with Parallel(n_jobs=self.n_jobs) as parallel:
+        if self.n_jobs in [0, 1]:
             return pd.concat(
-                parallel(
-                    delayed(func)(data[col], **self.parameters) for col in data.columns
-                ),
+                [
+                    pd.Series(
+                        func(data[col], **self.parameters), name=col, index=data.index
+                    )
+                    for col in data.columns
+                ],
+                axis=1,
+            )
+        with Parallel(n_jobs=self.n_jobs) as parallel:
+            transformed = parallel(
+                delayed(func)(data[col], **self.parameters) for col in data.columns
+            )
+            return pd.concat(
+                [
+                    pd.Series(t, name=col, index=data.index)
+                    for t, col in zip(transformed, data.columns)
+                ],
                 axis=1,
             )
